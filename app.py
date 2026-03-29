@@ -1,97 +1,102 @@
 import streamlit as st
 import google.generativeai as genai
 
-# --- 1. SAYFA VE TEMA AYARLARI ---
+# --- 1. SAYFA YAPILANDIRMASI VE AI STUDIO TEMASI ---
 st.set_page_config(
-    page_title="CMO Symposium 2026 - AI Studio",
-    page_icon="🤖",
-    layout="wide", # AI Studio gibi tam genişlik sağlar
+    page_title="CMO Sempozyumu 2026 - Dijital Asistan",
+    page_icon="✨",
+    layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# AI Studio'nun koyu lacivert menü ve yazı tiplerini taklit eden CSS
+st.markdown("""
+    <style>
+    [data-testid="stSidebar"] {
+        background-color: #1a237e;
+        color: white;
+    }
+    [data-testid="stSidebar"] * {
+        color: white !important;
+    }
+    .stChatMessage {
+        border-radius: 15px;
+        margin-bottom: 10px;
+    }
+    .stChatInputContainer {
+        padding-bottom: 20px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 # --- 2. API VE MODEL AYARLARI ---
 API_KEY = "AIzaSyChx3p9huHTg6IMVEI-Not5i94g099578o"
 genai.configure(api_key=API_KEY)
 
-# AI Studio'daki gibi yapılandırma ayarları
-generation_config = {
-  "temperature": 0.7,
-  "top_p": 0.95,
-  "top_k": 64,
-  "max_output_tokens": 2048,
-}
-
-# AI Studio'da yazdığımız System Instruction
+# Sisteme verdiğin bilgileri buraya "Beyin" olarak yüklüyoruz
 system_instruction = """
-Sen CMO Future Business Symposium 2026'nın resmi dijital asistanısın. 
-Görevin, katılımcılara (üst düzey pazarlama liderleri ve CMO'lar) etkinlik boyunca rehberlik etmektir.
+Sen CMO Future Business Symposium 2026'nın RESMİ dijital asistanısın. 
+Ekran görüntüsündeki ve linkteki TÜM bilgilere hakimsin.
 
-ETKİNLİK BİLGİLERİ:
-- Teması: "Mutasyon - Pazarlamanın Konfor Alanını Terk Etmesi"
-- Tarih: 16 – 19 Nisan 2026
-- Konum: Antalya (Belek bölgesi)
-- İçerik: Liderliğin kodları, işin geleceği, derinlikli tartışmalar ve yüzleşmeler.
-- Ödül Töreni: CMO Awards 2026 kazananları bu sempozyum kapsamında açıklanacaktır.
+BİLGİ BANKASI:
+- ANA TEMA: "Mutasyon - Pazarlamanın Konfor Alanını Terk Etmesi" (WTF?! temasıyla da anılır).
+- KONUM: Antalya, Belek.
+- TARİH: 16 – 19 Nisan 2026.
+- ÖNEMLİ BÖLÜMLER: 
+  1. Program (Pazarlamanın geleceği, mutasyon tartışmaları).
+  2. Konuşmacılar (Sektör liderleri ve CMO'lar).
+  3. Networking Match (Katılımcı eşleşmeleri).
+  4. CMO Awards (Ödül töreni Antalya'da yapılacak).
 
 KURALLAR:
-1. Dilin her zaman profesyonel, vizyoner ve nazik olmalı.
-2. Katılımcıların zamanı kıymetlidir, cevapların kısa ve öz olsun.
-3. Bilmediğin spesifik bir lojistik detay olursa 'Bu konuda kayıt masasındaki ekip arkadaşlarımız size en doğru bilgiyi verecektir' de.
+- Cevapların profesyonel ama samimi olsun (AI Studio'daki gibi).
+- Kullanıcıya "CMO Sempozyumu 2026'ya hoş geldiniz!" diyerek yardımcı ol.
+- Eğer bir bilgiyi bilmiyorsan "Kayıt masasına danışabilirsiniz" de.
 """
 
 model = genai.GenerativeModel(
     model_name="gemini-1.5-flash",
-    generation_config=generation_config,
     system_instruction=system_instruction
 )
 
-# --- 3. SOL MENÜ (AI Studio Arayüzü) ---
+# --- 3. SOL MENÜ (AI Studio Görünümü) ---
 with st.sidebar:
-    st.markdown("<h1 style='color: #4285F4;'>Google AI Studio</h1>", unsafe_allow_html=True)
+    st.image("https://img.icons8.com/color/96/artificial-intelligence.png", width=80)
+    st.markdown("### CMO Sempozyumu 2026\n**Dijital Asistan**")
     st.markdown("---")
     
-    st.subheader("📍 Etkinlik Özeti")
-    st.info("**Tema:** Mutasyon\n\n**Tarih:** 16-19 Nisan 2026\n\n**Konum:** Antalya")
+    # Menü İkonları (AI Studio'daki gibi)
+    st.button("💬 Asistan", use_container_width=True)
+    st.button("📅 Program", use_container_width=True)
+    st.button("👥 Konuşmacılar", use_container_width=True)
+    st.button("🤝 Networking Match", use_container_width=True)
+    st.button("🏆 CMO Awards", use_container_width=True)
     
     st.markdown("---")
-    st.subheader("Model Settings")
-    st.text_input("Model", value="gemini-1.5-flash", disabled=True)
-    st.slider("Temperature", 0.0, 1.0, 0.7, disabled=True)
-    
-    st.markdown("---")
-    st.caption("CMO Society v1.0")
+    st.write(f"👤 **Necmi Yıldız**\n*Katılımcı*")
 
-# --- 4. ANA SOHBET ALANI ---
-st.markdown("<h1 style='color: #202124;'>Build with Gemini</h1>", unsafe_allow_html=True)
-st.caption("CMO Sempozyumu için özel olarak eğitilmiş dijital asistan.")
-st.markdown("---")
+# --- 4. ANA EKRAN ---
+st.markdown("## Asistan <span style='color:#4caf50; font-size:small;'>● SİSTEM AKTİF</span>", unsafe_allow_html=True)
+st.caption("CMO Future Business Symposium 2026 Resmi Dijital Asistanı")
 
-# Sohbet Geçmişi Tutma
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = [
+        {"role": "assistant", "content": "CMO Sempozyumu 2026'ya hoş geldiniz! Bu yıl 'WTF?!' temasıyla Antalya'da buluşuyoruz. Program detayları, konuşmacılarımız veya katılım koşulları hakkında size nasıl yardımcı olabilirim?"}
+    ]
 
-# Mesajları Ekrana Basma
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Kullanıcı Girişi
-if prompt := st.chat_input("Buraya sorunuzu yazın..."):
+if prompt := st.chat_input("Mesajınızı yazın..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
         try:
-            # AI Studio mantığında yanıt üretme
             response = model.generate_content(prompt)
             st.markdown(response.text)
             st.session_state.messages.append({"role": "assistant", "content": response.text})
         except Exception as e:
-            st.error("Bir bağlantı sorunu oluştu.")
-            st.info("Lütfen API anahtarınızın Google Cloud tarafında kısıtlanmadığından emin olun.")
-
-# --- 5. LOGO EKLEME (Opsiyonel) ---
-# Eğer GitHub repona 'logo.png' diye bir dosya yüklersen, 
-# aşağıdaki satırı aktif edip (başındaki # silerek) sol menüye logo koyabiliriz.
-# st.sidebar.image("logo.png")
+            st.error("Bir hata oluştu. API anahtarınızı kontrol edin.")
