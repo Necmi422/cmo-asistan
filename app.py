@@ -9,117 +9,116 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# AI Studio'nun o meşhur lacivert sol menüsünü ve profesyonel arayüzünü taklit eden CSS
+# Gelişmiş CSS: Sol menüdeki görünürlük sorununu ve AI Studio şıklığını sağlar
 st.markdown("""
     <style>
-    /* Sol menü (Sidebar) tasarımı */
+    /* Sol menü (Sidebar) arka planı ve yazı renkleri */
     [data-testid="stSidebar"] {
-        background-color: #1a237e;
-        color: white;
+        background-color: #1a237e !important;
     }
-    [data-testid="stSidebar"] * {
+    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h3 {
         color: white !important;
     }
-    /* Sohbet balonlarını yuvarlatma */
-    .stChatMessage {
-        border-radius: 15px;
-        margin-bottom: 10px;
+    /* Sol menüdeki butonlar */
+    div.stButton > button {
+        background-color: #283593;
+        color: white !important;
+        border: 1px solid #3949ab;
+        width: 100%;
+        border-radius: 8px;
     }
-    /* Giriş kutusunu düzenleme */
-    .stChatInputContainer {
-        padding-bottom: 20px;
-    }
-    /* Başlık rengi */
-    .stMarkdown h1, .stMarkdown h2 {
-        color: #202124;
+    /* Örnek soru butonları */
+    .stButton > button {
+        border-radius: 20px;
     }
     </style>
     """, unsafe_allow_html=True)
 
 # --- 2. API VE MODEL AYARLARI ---
-# API Key burada gömülü:
 API_KEY = "AIzaSyChx3p9huHTg6IMVEI-Not5i94g099578o"
 genai.configure(api_key=API_KEY)
 
-# Sisteme verdiğimiz kurumsal bilgiler
+# 404 hatasını çözmek için model ismini doğrudan tanımlıyoruz
+MODEL_ID = "models/gemini-1.5-flash"
+
 system_instruction = """
 Sen CMO Future Business Symposium 2026'nın RESMİ dijital asistanısın. 
-Görevin, katılımcılara (üst düzey pazarlama liderleri ve CMO'lar) etkinlik boyunca rehberlik etmektir.
+Görevin, katılımcılara etkinlik boyunca rehberlik etmektir.
 
 BİLGİ BANKASI:
-- ANA TEMA: "Mutasyon - Pazarlamanın Konfor Alanını Terk Etmesi" (Etkinlikte 'WTF?!' temasıyla da anılmaktadır).
-- KONUM: Antalya, Belek bölgesi.
+- ANA TEMA: "Mutasyon - Pazarlamanın Konfor Alanını Terk Etmesi" (WTF?!).
+- KONUM: Antalya, Belek.
 - TARİH: 16 – 19 Nisan 2026.
-- İÇERİK: Liderliğin kodları, işin geleceği, derinlikli tartışmalar ve yüzleşmeler.
-- ÖDÜL TÖRENİ: CMO Awards 2026 kazananları bu sempozyum kapsamında açıklanacaktır.
-
-KURALLAR:
-1. Dilin her zaman profesyonel, vizyoner ve nazik olmalı.
-2. Katılımcıların zamanı kıymetlidir, cevapların kısa ve öz olsun.
-3. Kullanıcıyı her zaman "CMO Sempozyumu 2026'ya hoş geldiniz!" diyerek veya samimi bir asistan tonuyla karşıla.
+- ÖDÜL TÖRENİ: CMO Awards 2026 Antalya'da yapılacaktır.
 """
 
-# Model Yapılandırması
-generation_config = {
-  "temperature": 0.7,
-  "top_p": 0.95,
-  "top_k": 64,
-  "max_output_tokens": 2048,
-}
-
+# Model nesnesini oluştururken model_id'yi netleştiriyoruz
 model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
-    generation_config=generation_config,
+    model_name=MODEL_ID,
     system_instruction=system_instruction
 )
 
-# --- 3. SOL MENÜ (AI STUDIO GÖRÜNÜMÜ) ---
+# --- 3. SOL MENÜ (Sidebar) ---
 with st.sidebar:
-    # İkon ve Başlık
-    st.markdown("### ✨ CMO Sempozyumu 2026\n**Dijital Asistan**")
+    st.markdown("### ✨ CMO Sempozyumu 2026")
+    st.caption("Dijital Asistan v1.3")
     st.markdown("---")
     
-    # AI Studio gibi butonlar
-    st.button("💬 Asistan", use_container_width=True)
-    st.button("📅 Program", use_container_width=True)
-    st.button("👥 Konuşmacılar", use_container_width=True)
-    st.button("🤝 Networking Match", use_container_width=True)
-    st.button("🏆 CMO Awards", use_container_width=True)
+    st.button("💬 Asistan (Aktif)", key="m1")
+    st.button("📅 Program", key="m2")
+    st.button("👥 Konuşmacılar", key="m3")
+    st.button("🤝 Networking", key="m4")
+    st.button("🏆 CMO Awards", key="m5")
     
     st.markdown("---")
-    # Kullanıcı Profili (Senin için)
-    st.markdown("👤 **Necmi Yıldız**\n*Katılımcı / Organizatör*")
-    st.caption("Google Istanbul - Tekfen Tower")
+    st.markdown("👤 **Necmi Yıldız**\n\n*Katılımcı / Organizatör*")
+    st.info("📍 Tekfen Tower, İstanbul")
 
-# --- 4. ANA SOHBET EKRANI ---
-st.markdown("## Asistan <span style='color:#4caf50; font-size:small;'>● SİSTEM AKTİF</span>", unsafe_allow_html=True)
+# --- 4. ANA EKRAN VE ÖRNEK SORULAR ---
+st.markdown("## Build with Gemini")
 st.caption("CMO Future Business Symposium 2026 Resmi Dijital Asistanı")
 st.markdown("---")
 
-# Sohbet Geçmişi Yönetimi
 if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "assistant", "content": "CMO Sempozyumu 2026'ya hoş geldiniz! Bu yıl 'WTF?!' temasıyla Antalya'da buluşuyoruz. Program detayları, konuşmacılarımız veya katılım koşulları hakkında size nasıl yardımcı olabilirim?"}
-    ]
+    st.session_state.messages = []
 
-# Mesajları Ekranda Göster
+# Örnek Sorular (Ekranda buton olarak görünür)
+if not st.session_state.messages:
+    st.write("👋 **Hoş geldiniz! İşte sorabileceğiniz bazı örnekler:**")
+    
+    suggestions = [
+        "Sempozyumun bu yılki teması nedir?",
+        "Antalya'daki etkinlik programı belli mi?",
+        "CMO Awards töreni ne zaman yapılacak?",
+        "Networking Match özelliği nasıl çalışıyor?"
+    ]
+    
+    cols = st.columns(2)
+    for i, quest in enumerate(suggestions):
+        if cols[i % 2].button(quest):
+            st.session_state.temp_prompt = quest
+
+# Mesaj Geçmişi
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Kullanıcı Girişi
-if prompt := st.chat_input("Mesajınızı buraya yazın..."):
-    st.session_state.messages.append({"role": "user", "content": prompt})
+# Giriş ve Yanıt
+prompt = st.chat_input("Mesajınızı yazın...")
+user_input = prompt or st.session_state.get("temp_prompt")
+
+if user_input:
+    if "temp_prompt" in st.session_state: del st.session_state["temp_prompt"]
+    
+    st.session_state.messages.append({"role": "user", "content": user_input})
     with st.chat_message("user"):
-        st.markdown(prompt)
+        st.markdown(user_input)
 
     with st.chat_message("assistant"):
         try:
-            # Yapay zekadan yanıt alma
-            response = model.generate_content(prompt)
+            # Yanıt üretme
+            response = model.generate_content(user_input)
             st.markdown(response.text)
             st.session_state.messages.append({"role": "assistant", "content": response.text})
         except Exception as e:
-            # HATA ANALİZİ: Sorun neyse ekrana detaylı basar
-            st.error(f"Hata Oluştu: {str(e)}")
-            st.info("İpucu: Eğer 'User location not supported' diyorsa, Streamlit'in bulut sunucuları Türkiye dışındaki bir bölgeden Google'a erişmeye çalışıyor olabilir.")
+            st.error(f"Teknik bir sorun oluştu: {str(e)}")
