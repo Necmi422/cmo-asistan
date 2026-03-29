@@ -78,3 +78,48 @@ with st.sidebar:
     # İkon ve Başlık
     st.markdown("### ✨ CMO Sempozyumu 2026\n**Dijital Asistan**")
     st.markdown("---")
+    
+    # AI Studio gibi butonlar
+    st.button("💬 Asistan", use_container_width=True)
+    st.button("📅 Program", use_container_width=True)
+    st.button("👥 Konuşmacılar", use_container_width=True)
+    st.button("🤝 Networking Match", use_container_width=True)
+    st.button("🏆 CMO Awards", use_container_width=True)
+    
+    st.markdown("---")
+    # Kullanıcı Profili (Senin için)
+    st.markdown("👤 **Necmi Yıldız**\n*Katılımcı / Organizatör*")
+    st.caption("Google Istanbul - Tekfen Tower")
+
+# --- 4. ANA SOHBET EKRANI ---
+st.markdown("## Asistan <span style='color:#4caf50; font-size:small;'>● SİSTEM AKTİF</span>", unsafe_allow_html=True)
+st.caption("CMO Future Business Symposium 2026 Resmi Dijital Asistanı")
+st.markdown("---")
+
+# Sohbet Geçmişi Yönetimi
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {"role": "assistant", "content": "CMO Sempozyumu 2026'ya hoş geldiniz! Bu yıl 'WTF?!' temasıyla Antalya'da buluşuyoruz. Program detayları, konuşmacılarımız veya katılım koşulları hakkında size nasıl yardımcı olabilirim?"}
+    ]
+
+# Mesajları Ekranda Göster
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# Kullanıcı Girişi
+if prompt := st.chat_input("Mesajınızı buraya yazın..."):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    with st.chat_message("assistant"):
+        try:
+            # Yapay zekadan yanıt alma
+            response = model.generate_content(prompt)
+            st.markdown(response.text)
+            st.session_state.messages.append({"role": "assistant", "content": response.text})
+        except Exception as e:
+            # HATA ANALİZİ: Sorun neyse ekrana detaylı basar
+            st.error(f"Hata Oluştu: {str(e)}")
+            st.info("İpucu: Eğer 'User location not supported' diyorsa, Streamlit'in bulut sunucuları Türkiye dışındaki bir bölgeden Google'a erişmeye çalışıyor olabilir.")
